@@ -1,0 +1,22 @@
+Basic Process
+1. Create a new feature branch.
+2. Add and push multiple commits in that branch.
+3. Use git rebase to squash/organize commits if needed.
+4. Create a PR against the develop branch.
+5. Request a code review.
+6. The reviewer merges the PR into develop when satisfied.
+7. The reviewer deletes the feature branch.
+
+Code Review Best Practices
+1. Do not make it personal and do not take it personally. The review is of the code, not the author.
+2. Ask questions. Do not make demands.
+3. Ask for clarification and be willing to give explanations.
+4. Comments should be made using Github. A Pull request is a valuable form of documentation.
+5. Accept that many programming decisions are choices, that there is not always a single correct choice, and that code can always be refactored later.
+6. Code reviewers should clearly communicate if they feel a change is required or simply a suggestion.
+
+Issues
+1. Any one can create an issue if they feel they need to add a feature or report a bug or do some enhancement.
+2. Make sure to add appropriate label to it.
+3. Any one can take up an issue and assign to themselves and create PRs 
+
