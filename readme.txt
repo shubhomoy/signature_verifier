@@ -67,9 +67,3 @@ For further help, you may type the command
 
 -> python utility.py --help
 
-Or email us at
-shubhomoy.tubu@gmail.com
-aditya2595p@gmail.com
-
-Or call us at
-+91 8851680923
