@@ -59,10 +59,12 @@ class Trainer(object):
 
             dist = np.linalg.norm(np.array([f1, f2, f3, f4, f5[0], f5[1], f6]) - np.array(self.trained_features))
             eucl_dists.append(dist)
-        return tuple([min(eucl_dists), max(eucl_dists)])
+        return [min(eucl_dists), max(eucl_dists)]
 
     def save(self, input_dir):
         threshold = self.get_threshold()
+        threshold[1] = threshold[1] // 2
+        print threshold
         model = {
             'f1': self.trained_features[0],
             'f2': self.trained_features[1],
