@@ -43,7 +43,7 @@ class Trainer(object):
         f6_mean = np.mean(f5_unfold[1])
         f7_mean = np.mean(f6_arr)
 
-        self.trained_features = tuple([f1_mean, f2_mean, f3_mean, f4_mean, f5_mean, f6_mean, f7_mean])
+        self.trained_features = (f1_mean, f2_mean, f3_mean, f4_mean, f5_mean, f6_mean, f7_mean)
         return self.trained_features
 
     def get_threshold(self):
@@ -56,8 +56,9 @@ class Trainer(object):
             f4 = feature_extractor.extract_critical_points()
             f5 = feature_extractor.extract_center_of_gravity()
             f6 = feature_extractor.extract_slope_of_cg()
-
+            a = [f1, f2, f3, f4, f5[0], f5[1], f6]
             dist = np.linalg.norm(np.array([f1, f2, f3, f4, f5[0], f5[1], f6]) - np.array(self.trained_features))
+            d = np.subtract(np.array(a), np.array(self.trained_features))
             eucl_dists.append(dist)
         return [min(eucl_dists), max(eucl_dists)]
 

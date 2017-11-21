@@ -1,12 +1,20 @@
 import os
+from collections import namedtuple
 
 import cv2
 import numpy as np
+import logging
+logging.basicConfig()
+SignatureImage = namedtuple('SignatureImage', 'filename viewfinder_crop binary rotated corners cropped')
+
+PIXEL_COUNT_ACCEPT_THRESHOLD = 0.06
 
 
 class SignaturePreprocessor(object):
 
     def __init__(self, input_dir, output_dir=None):
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
         self.input_dir = input_dir
         self.output_dir = '{}/preprocessed'.format(input_dir) if output_dir is None else output_dir
         if not os.path.exists(self.output_dir):
@@ -100,27 +108,31 @@ class SignaturePreprocessor(object):
         print 'Pre-processing'
         print '--------------------------------------'
         processed_images = []
-        pixel_list = []
+        images_to_remove = []
+        pixel_count_threshold = []
         for img_file in os.listdir(self.input_dir):
             if not img_file.lower().endswith(('.png', '.jpeg', '.jpg')):
                 continue
             print 'Processing signature image - {}'.format(img_file)
-            cropped_image = self.__crop(img_file)
-            binary_image = self.__convert_to_binary(cropped_image, img_file)
+            viewfinder_crop = self.__crop(img_file)
+            binary_image = self.__convert_to_binary(viewfinder_crop, img_file)
             rotated_image = self.__fix_rotation(binary_image, img_file)
             cropped_image = self.__final_crop(rotated_image, img_file)
-            pixel_list.append(len(np.where(cropped_image == 0)[0]))
-            corners = self.__detect_edge(binary_image)
-            processed_images.append(tuple([cropped_image, binary_image, rotated_image, cropped_image, corners, img_file]))
+            pixel_count = len(np.where(cropped_image == 0)[0])*1.0/(cropped_image.shape[0]*cropped_image.shape[1])
+            corners = self.__detect_edge(rotated_image)
+            image = SignatureImage(img_file, viewfinder_crop, binary_image, rotated_image, corners, cropped_image)
+            if pixel_count < PIXEL_COUNT_ACCEPT_THRESHOLD:
+                images_to_remove.append(image)
+                continue
+            processed_images.append(image)
         print '--------------------------------------'
-        std_d = np.std(pixel_list)
-        mean = np.mean(pixel_list)
 
-        # setting threshold
-        set_threshold = mean - std_d
-        idx_to_remove = np.where(pixel_list < set_threshold)[0]
+        idx_to_remove = np.where(pixel_count_threshold < PIXEL_COUNT_ACCEPT_THRESHOLD)[0]
 
         # remove the processed image which does not satisfy threshold
-        # TODO: show removed images
-        processed_images = [processed_image for i, processed_image in enumerate(processed_images) if i not in idx_to_remove]
+        print 'Images removed'
+        for image in images_to_remove:
+            print image.filename
+
+        print
         return processed_images

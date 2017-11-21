@@ -4,12 +4,12 @@ import numpy as np
 class FeatureExtractor(object):
     def __init__(self, processed_image):
         self.processed_image = processed_image
-        self.cropped_image = self.processed_image[0]
-        self.binary_image = self.processed_image[1]
-        self.rotated_image = self.processed_image[2]
-        self.cropped_image = self.processed_image[3]
-        self.corners = self.processed_image[4]
-        self.file_name = self.processed_image[5]
+        self.viewfinder_cropped = self.processed_image.viewfinder_crop
+        self.binary_image = self.processed_image.binary
+        self.rotated_image = self.processed_image.rotated
+        self.cropped_image = self.processed_image.cropped
+        self.corners = self.processed_image.corners
+        self.file_name = self.processed_image.filename
 
     @staticmethod
     def __get_center_of_gravity(img, cond, x_add=0, y_add=0):
@@ -34,8 +34,8 @@ class FeatureExtractor(object):
         return height * 1.0 / width
 
     def extract_occupancy_ratio(self):
-        filled_pixel = len(np.where(self.cropped_image == 0)[0])
-        total = self.cropped_image.shape[0] * self.cropped_image.shape[1]
+        filled_pixel = len(np.where(self.viewfinder_cropped == 0)[0])
+        total = self.viewfinder_cropped.shape[0] * self.viewfinder_cropped.shape[1]
         return filled_pixel*1.0 / total
 
     def extract_density_ratio(self):

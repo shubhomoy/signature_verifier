@@ -34,7 +34,8 @@ class Predictor(object):
                                                                                            self.model['f5'],
                                                                                            self.model['f6'],
                                                                                            self.model['f7']]))
-            eucl_dists.append(tuple([dist, processed_image[5]]))
+            eucl_dists.append((dist, processed_image))
+            print dist, processed_image.filename
 
-        result = [(x[1], True) if self.model['threshold'][0] <= x[0] <= self.model['threshold'][1] else (x[1], False) for x in eucl_dists]
+        result = [(x[1].filename, True) if self.model['threshold'][0] <= x[0] <= self.model['threshold'][1] else (x[1].filename, False) for x in eucl_dists]
         return result
