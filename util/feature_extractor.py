@@ -22,11 +22,11 @@ class FeatureExtractor(object):
             x_sum += sum(row_indices)
             x_num += len(row_indices)
             if len(row_indices) > 0:
-                y_sum += y
-                y_num += 1
+                y_sum += y*len(row_indices)
+                y_num += len(row_indices)
         x = (x_sum * 1. / x_num) + x_add if x_num > 0 else 0
         y = (y_sum * 1. / y_num) + y_add if y_num > 0 else 0
-        return tuple([x, y])
+        return x, y
 
     def extract_height_to_width_ratio(self):
         width = self.cropped_image.shape[1]
@@ -34,8 +34,8 @@ class FeatureExtractor(object):
         return height * 1.0 / width
 
     def extract_occupancy_ratio(self):
-        filled_pixel = len(np.where(self.viewfinder_cropped == 0)[0])
-        total = self.viewfinder_cropped.shape[0] * self.viewfinder_cropped.shape[1]
+        filled_pixel = len(np.where(self.binary_image == 0)[0])
+        total = self.binary_image.shape[0] * self.binary_image.shape[1]
         return filled_pixel*1.0 / total
 
     def extract_density_ratio(self):
@@ -52,15 +52,15 @@ class FeatureExtractor(object):
         return len(np.where(self.corners == 0)[0])
 
     def extract_center_of_gravity(self):
-        return self.__get_center_of_gravity(self.cropped_image, 255)
+        return self.__get_center_of_gravity(self.cropped_image, 0)
 
     def extract_slope_of_cg(self):
         x_mid = self.cropped_image.shape[1] / 2
-        left_part = self.cropped_image[:, :x_mid]
+        left_part = self.cropped_image[:, 0:x_mid]
         right_part = self.cropped_image[:, x_mid + 1:]
 
         left_cg = self.__get_center_of_gravity(left_part, 0)
         right_cg = self.__get_center_of_gravity(right_part, 0, x_add=x_mid+1)
 
-        slope = (right_cg[1] - left_cg[1])*1.0 / (right_cg[0] - left_cg[0])*1.0
+        slope = (right_cg[1] - left_cg[1])*1.0 / (right_cg[0] - left_cg[0])
         return slope

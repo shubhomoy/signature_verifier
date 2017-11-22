@@ -109,7 +109,6 @@ class SignaturePreprocessor(object):
         print '--------------------------------------'
         processed_images = []
         images_to_remove = []
-        pixel_count_threshold = []
         for img_file in os.listdir(self.input_dir):
             if not img_file.lower().endswith(('.png', '.jpeg', '.jpg')):
                 continue
@@ -126,8 +125,6 @@ class SignaturePreprocessor(object):
                 continue
             processed_images.append(image)
         print '--------------------------------------'
-
-        idx_to_remove = np.where(pixel_count_threshold < PIXEL_COUNT_ACCEPT_THRESHOLD)[0]
 
         # remove the processed image which does not satisfy threshold
         print 'Images removed'

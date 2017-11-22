@@ -56,11 +56,9 @@ class Trainer(object):
             f4 = feature_extractor.extract_critical_points()
             f5 = feature_extractor.extract_center_of_gravity()
             f6 = feature_extractor.extract_slope_of_cg()
-            a = [f1, f2, f3, f4, f5[0], f5[1], f6]
             dist = np.linalg.norm(np.array([f1, f2, f3, f4, f5[0], f5[1], f6]) - np.array(self.trained_features))
-            d = np.subtract(np.array(a), np.array(self.trained_features))
             eucl_dists.append(dist)
-        return [min(eucl_dists), max(eucl_dists)]
+        return [min(eucl_dists), np.mean(eucl_dists)]
 
     def save(self, input_dir):
         threshold = self.get_threshold()
